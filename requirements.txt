@@ -1,0 +1,2 @@
+# Requirements for kmer_trinucleotide
+cython>=0.25.0

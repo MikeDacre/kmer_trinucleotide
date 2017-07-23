@@ -7,9 +7,9 @@ Info
 Author: Michael D Dacre, mike.dacre@gmail.com
 Organization: Stanford University
 License: MIT License, property of Stanford, use as you wish
-Version: 0.1.0a
+Version: 0.1.0a1
 Created: 2017-09-19 16:07
-Last modified: 2017-07-19 16:10
+Last modified: 2017-07-19 16:53
 
 Summary
 -------
@@ -29,4 +29,6 @@ the weight by how much?
 This is currently under development, as in its current form it will take several
 years to run.
 """
-__version__ = '0.1.0a'
+__version__ = '0.1.0a1'
+
+from . import scan_kmer
