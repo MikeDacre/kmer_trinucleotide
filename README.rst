@@ -15,6 +15,3 @@ compare those to **every other kmer at that position**. For each trinucleotide
 it will ask how, on *average* does the **central nucleotide** affect the score.
 In other words, changing the central nucleotide in any trinucleotide changes
 the weight by how much?
-
-This is currently under development, as in its current form it will take several
-years to run.
