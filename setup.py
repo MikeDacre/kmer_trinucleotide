@@ -48,7 +48,7 @@ setup(
 
     keywords='genetics',
 
-    install_requires=['cython'],
+    install_requires=['cython', 'numpy', 'pandas'],
     packages=['kmer_trinucleotide'],
     #  entry_points={
         #  'console_scripts': [

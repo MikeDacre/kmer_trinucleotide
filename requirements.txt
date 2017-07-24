@@ -1,2 +1,4 @@
 # Requirements for kmer_trinucleotide
 cython>=0.25.0
+pandas>=0.20.0
+numpy>=1.13.0

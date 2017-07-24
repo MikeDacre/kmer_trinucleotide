@@ -9,7 +9,7 @@ Organization: Stanford University
 License: MIT License, property of Stanford, use as you wish
 Version: 0.1.0a1
 Created: 2017-09-19 16:07
-Last modified: 2017-07-23 16:55
+Last modified: 2017-07-23 17:41
 
 Summary
 -------
@@ -29,3 +29,5 @@ the weight by how much?
 __version__ = '0.1.0a1'
 
 from .scan_kmer import get_weights
+from .scan_kmer import get_weight_matrix
+from .file_parsers import parse_kmer_file

@@ -3,6 +3,7 @@
 Cython optimized kmer scanning functions
 """
 import numpy as np
+import pandas as pd
 
 ################################################################################
 #                Wrapper Functions for Testing, Will Be Deleted                #
@@ -95,35 +96,73 @@ def get_weights(list kmers):
 
     Weight of second kmer - weight of first, i.e. how does weight change when
     changing from the second trinucleotide to the first.
-     
+
     Parameters
     ----------
     kmers : list
         List of [(kmer, weight)]
-     
+
     Returns
     -------
     trinucleotide_weights : dict
-        {trinucleotide: {trinucleotide: weight_change}}
+        {trinucleotide1: {trinucleotide2: weight_change}}
+        weight_change is trinucleotide2-trinucleotide1, or what the weight
+        change would be if going from trinucleotide2 to trinucleotide1
     """
     cdef list nucs = list('ATGC')
     cdef dict data = build_dict(kmers)
     cdef dict trinucs = {}
+    cdef dict weights = {}
     # Initialize dictionary
     for nuc1 in nucs:
         for nuc2 in nucs:
             for nuc3 in nucs:
                 core = ''.join([nuc1, nuc2, nuc3])
+                trinucs[core] = np.nan
                 alt = {}
-                for nuc_alt in [nuc for nuc in nucs if nuc != nuc2]: 
+                for nuc_alt in [nuc for nuc in nucs if nuc != nuc2]:
                     alt[''.join([nuc1, nuc_alt, nuc3])] = np.nan
-                trinucs[core] = alt
-    # Actual calculation
+                weights[core] = alt
+    # Get all mean weights
     for kmer, weight in kmers:
         for pos, tri in trinucleoties(kmer):
             for t, w in get_other_weights(pos, tri, data):
-                orig = trinucs[tri][t]
+                # Primary trinucleotide weight
+                orig = trinucs[tri]
                 if orig is np.nan:
-                    trinucs[tri][t] = w
+                    trinucs[tri] = weight
                 else:
-                    trinucs[tri][t] = np.mean([orig, w])
+                    trinucs[tri] = np.mean([orig, weight])
+                # Secondary trinucleotide weight
+                orig = weights[tri][t]
+                if orig is np.nan:
+                    weights[tri][t] = w
+                else:
+                    weights[tri][t] = np.mean([orig, w])
+    # Do the subtraction
+    for nuc1, info in weights.items():
+        for nuc2, w in info.items():
+            weights[nuc1][nuc2] = w - trinucs[nuc1]
+    return weights
+
+def get_weight_matrix(list kmers):
+    """Return a DataFrame of trinucleotide relative weights.
+
+    Weight are rows minus columns.
+
+    Averaged per position.
+
+    Weight of second kmer - weight of first, i.e. how does weight change when
+    changing from the second trinucleotide to the first.
+
+    Parameters
+    ----------
+    kmers : list
+        List of [(kmer, weight)]
+
+    Returns
+    -------
+    DataFrame
+    """
+    weights = get_weights(kmers)
+    df = pd.DataFrame.from_dict(weights)
